@@ -140,6 +140,7 @@ void glut_display() {
   glutWireTeapot(1.0);
   glPopMatrix();
 
+  glColor3f(1.0, 0.0, 0.0);
   glPushMatrix();
   glScalef(2, .3, 1);
   glutSolidCube(3);
