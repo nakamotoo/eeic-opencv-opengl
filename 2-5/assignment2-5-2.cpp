@@ -31,6 +31,7 @@ double g_distance = 10.0;
 bool g_isLeftButtonOn = false;
 bool g_isRightButtonOn = false;
 GLuint g_TextureHandles[3] = {0, 0, 0};
+GLuint g_TextureHandles2[3] = {0, 0, 0};
 
 int main(int argc, char *argv[]) {
   /* OpenGL縺ｮ蛻晄悄蛹� */
@@ -60,10 +61,12 @@ void init() {
   glClearColor(0.2f, 0.2f, 0.2f, 0.2f);
   /* hatena */
   glGenTextures(3, g_TextureHandles);
+  glGenTextures(1, g_TextureHandles2);
 
   for (int i = 0; i < 3; i++) {
     /* hatena */
     glBindTexture(GL_TEXTURE_2D, g_TextureHandles[i]);
+    glBindTexture(GL_TEXTURE_2D, g_TextureHandles2[i]);
     /* hatena */
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     /* hatena */
@@ -172,12 +175,15 @@ void glut_idle() {
   if (counter == 0) {
     /* hatena */
     glBindTexture(GL_TEXTURE_2D, g_TextureHandles[0]);
+    glBindTexture(GL_TEXTURE_2D, g_TextureHandles2[0]);
   } else if (counter == 100) {
     /* hatena */
     glBindTexture(GL_TEXTURE_2D, g_TextureHandles[1]);
+    glBindTexture(GL_TEXTURE_2D, g_TextureHandles2[1]);
   } else if (counter == 200) {
     /* hatena */
     glBindTexture(GL_TEXTURE_2D, g_TextureHandles[2]);
+    glBindTexture(GL_TEXTURE_2D, g_TextureHandles2[2]);
   }
 
   counter++;
@@ -194,38 +200,49 @@ void draw_pyramid() {
   GLdouble pointC[] = {-1.5, -1.0, -1.5};
   GLdouble pointD[] = {1.5, -1.0, -1.5};
 
+  glEnable(GL_TEXTURE_2D);
+
   glColor3d(1.0, 0.0, 0.0);
   glBegin(GL_TRIANGLES);
+  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
+  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointA);
+  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointB);
   glEnd();
 
   glColor3d(1.0, 1.0, 0.0);
   glBegin(GL_TRIANGLES);
+  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
+  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointB);
+  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointC);
   glEnd();
 
   glColor3d(0.0, 1.0, 1.0);
   glBegin(GL_TRIANGLES);
+  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
+  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointC);
+  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointD);
   glEnd();
 
   glColor3d(1.0, 0.0, 1.0);
   glBegin(GL_TRIANGLES);
+  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
+  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointD);
+  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointA);
   glEnd();
 
   glColor3d(1.0, 1.0, 1.0);
-
-  /* hatena */
-  glEnable(GL_TEXTURE_2D);
 
   glBegin(GL_POLYGON);
   /* hatena */
@@ -255,6 +272,7 @@ void set_texture() {
     /* hatena */
     cv::cvtColor(input, input, CV_BGR2RGB);
     glBindTexture(GL_TEXTURE_2D, g_TextureHandles[i]);
+    glBindTexture(GL_TEXTURE_2D, g_TextureHandles2[i]);
     glTexSubImage2D(GL_TEXTURE_2D, 0, (TEXTURE_WIDTH - input.cols) / 2,
                     (TEXTURE_HEIGHT - input.rows) / 2, input.cols, input.rows,
                     GL_RGB, GL_UNSIGNED_BYTE, input.data);

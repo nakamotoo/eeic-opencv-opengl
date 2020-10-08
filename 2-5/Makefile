@@ -1,3 +1,3 @@
 CXX=g++
 CXXFLAGS=`pkg-config opencv --cflags`
-LDLIBS= -lGL -lGLU  `pkg-config opencv --libs`
+LDLIBS= -framework GLUT -framework OpenGL  `pkg-config opencv --libs`
