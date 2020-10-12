@@ -9,8 +9,8 @@
 #define WINDOW_X (500)
 #define WINDOW_Y (500)
 #define WINDOW_NAME "test5"
-#define TEXTURE_HEIGHT (512)
-#define TEXTURE_WIDTH (512)
+#define TEXTURE_HEIGHT (1300)
+#define TEXTURE_WIDTH (1300)
 
 void init_GL(int argc, char *argv[]);
 void init();
@@ -22,7 +22,7 @@ void glut_mouse(int button, int state, int x, int y);
 void glut_motion(int x, int y);
 void glut_idle();
 void draw_pyramid();
-void set_texture();
+void set_texture(cv::Mat frame);
 
 // 繧ｰ繝ｭ繝ｼ繝舌Ν螟画焚
 double g_angle1 = 0.0;
@@ -30,9 +30,18 @@ double g_angle2 = -3.141592 / 6;
 double g_distance = 10.0;
 bool g_isLeftButtonOn = false;
 bool g_isRightButtonOn = false;
-GLuint g_TextureHandles[3] = {0, 0, 0};
+GLuint g_TextureHandles[1] = {0};
+cv::VideoCapture cap;
+cv::Mat frame;
 
 int main(int argc, char *argv[]) {
+  cap.open(0);
+  if (!cap.isOpened()) {
+    printf("Cannot open the video.\n");
+    exit(0);
+  }
+  cap >> frame;
+
   /* OpenGL縺ｮ蛻晄悄蛹� */
   init_GL(argc, argv);
 
@@ -42,9 +51,7 @@ int main(int argc, char *argv[]) {
   /* 繧ｳ繝ｼ繝ｫ繝舌ャ繧ｯ髢｢謨ｰ縺ｮ逋ｻ骭ｲ */
   set_callback_functions();
 
-  /* 繝｡繧､繝ｳ繝ｫ繝ｼ繝� */
   glutMainLoop();
-
   return 0;
 }
 
@@ -59,24 +66,22 @@ void init() {
   /* hatena */
   glClearColor(0.2f, 0.2f, 0.2f, 0.2f);
   /* hatena */
-  glGenTextures(3, g_TextureHandles);
-
-  for (int i = 0; i < 3; i++) {
-    /* hatena */
-    glBindTexture(GL_TEXTURE_2D, g_TextureHandles[i]);
-    /* hatena */
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    /* hatena */
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    /* hatena */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    /* hatena */
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  }
+  glGenTextures(1, g_TextureHandles);
 
   /* hatena */
-  set_texture();
+  glBindTexture(GL_TEXTURE_2D, g_TextureHandles[0]);
+  /* hatena */
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  /* hatena */
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TEXTURE_WIDTH, TEXTURE_HEIGHT, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  /* hatena */
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  /* hatena */
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  /* hatena */
+  set_texture(frame);
 }
 
 void set_callback_functions() {
@@ -167,23 +172,9 @@ void glut_display() {
 }
 
 void glut_idle() {
-  static int counter = 0;
-
-  if (counter == 0) {
-    /* hatena */
-    glBindTexture(GL_TEXTURE_2D, g_TextureHandles[0]);
-  } else if (counter == 100) {
-    /* hatena */
-    glBindTexture(GL_TEXTURE_2D, g_TextureHandles[1]);
-  } else if (counter == 200) {
-    /* hatena */
-    glBindTexture(GL_TEXTURE_2D, g_TextureHandles[2]);
-  }
-
-  counter++;
-  if (counter > 300)
-    counter = 0;
-
+  // bool loop_flag = true;
+  cap >> frame;
+  set_texture(frame);
   glutPostRedisplay();
 }
 
@@ -194,49 +185,38 @@ void draw_pyramid() {
   GLdouble pointC[] = {-1.5, -1.0, -1.5};
   GLdouble pointD[] = {1.5, -1.0, -1.5};
 
-  glEnable(GL_TEXTURE_2D);
-
   glColor3d(1.0, 0.0, 0.0);
   glBegin(GL_TRIANGLES);
-  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
-  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointA);
-  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointB);
   glEnd();
 
   glColor3d(1.0, 1.0, 0.0);
   glBegin(GL_TRIANGLES);
-  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
-  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointB);
-  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointC);
   glEnd();
 
   glColor3d(0.0, 1.0, 1.0);
   glBegin(GL_TRIANGLES);
-  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
-  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointC);
-  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointD);
   glEnd();
 
   glColor3d(1.0, 0.0, 1.0);
   glBegin(GL_TRIANGLES);
-  glTexCoord2d(1.0, 0.0);
   glVertex3dv(pointO);
-  glTexCoord2d(0.0, 0.0);
   glVertex3dv(pointD);
-  glTexCoord2d(0.0, 1.0);
   glVertex3dv(pointA);
   glEnd();
 
   glColor3d(1.0, 1.0, 1.0);
+
+  /* hatena */
+  glEnable(GL_TEXTURE_2D);
 
   glBegin(GL_POLYGON);
   /* hatena */
@@ -257,17 +237,12 @@ void draw_pyramid() {
   glDisable(GL_TEXTURE_2D);
 }
 
-void set_texture() {
-  const char *inputFileNames[3] = {"apple.jpg", "fruits.jpg", "chicky_512.png"};
-  for (int i = 0; i < 3; i++) {
-    /* hatena */
-    cv::Mat input = cv::imread(inputFileNames[i], 1);
-    // BGR -> RGB縺ｮ螟画鋤
-    /* hatena */
-    cv::cvtColor(input, input, CV_BGR2RGB);
-    glBindTexture(GL_TEXTURE_2D, g_TextureHandles[i]);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, (TEXTURE_WIDTH - input.cols) / 2,
-                    (TEXTURE_HEIGHT - input.rows) / 2, input.cols, input.rows,
-                    GL_RGB, GL_UNSIGNED_BYTE, input.data);
-  }
+void set_texture(cv::Mat frame) {
+  // BGR -> RGB縺ｮ螟画鋤
+  /* hatena */
+  cv::cvtColor(frame, frame, CV_BGR2RGB);
+  glBindTexture(GL_TEXTURE_2D, g_TextureHandles[0]);
+  glTexSubImage2D(GL_TEXTURE_2D, 0, (TEXTURE_WIDTH - frame.cols) / 2,
+                  (TEXTURE_HEIGHT - frame.rows) / 2, frame.cols, frame.rows,
+                  GL_RGB, GL_UNSIGNED_BYTE, frame.data);
 }
