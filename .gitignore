@@ -30,5 +30,6 @@
 *.exe
 *.out
 *.app
+*.mp4
 
 .DS_Store

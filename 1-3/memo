@@ -1,6 +1,0 @@
-For compilers to find opencv@3 you may need to set:
-  export LDFLAGS="-L/usr/local/opt/opencv@3/lib"
-  export CPPFLAGS="-I/usr/local/opt/opencv@3/include"
-
-For pkg-config to find opencv@3 you may need to set:
-  export PKG_CONFIG_PATH="/usr/local/opt/opencv@3/lib/pkgconfig"
